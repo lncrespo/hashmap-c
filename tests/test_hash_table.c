@@ -128,4 +128,8 @@ int main() {
 
 	assert_str_eq("my_value test 2", hash_table_get(hash_table, "myke"));
 	assert_null(hash_table_get(hash_table, "my_key"));
+
+	hash_table_destroy(hash_table);
+
+	return 0;
 }

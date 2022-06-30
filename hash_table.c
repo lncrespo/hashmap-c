@@ -17,13 +17,18 @@ void dump_bucket(bucket_t *bucket) {
 	}
 }
 
-void destroy_bucket(bucket_t *bucket) {
+void destroy_bucket(bucket_t *bucket, bool recursive) {
 	if (bucket == NULL) {
 		return;
 	}
 
 	free(bucket->key);
 	free(bucket->value);
+
+	if (recursive && bucket->next != NULL) {
+		destroy_bucket(bucket->next, true);
+	}
+
 	free(bucket);
 }
 
@@ -61,8 +66,8 @@ bool hash_table_insert(hash_table_t *hash_table, char *key, char *value) {
 	}
 
 	bucket_t *entry = malloc(sizeof(bucket_t));
-	entry->value = malloc(sizeof(value));
-	entry->key = malloc(sizeof(key));
+	entry->value = malloc(strlen(value) + 1);
+	entry->key = malloc(strlen(key) + 1);
 	entry->next = hash_table->buckets[index];
 
 	strcpy(entry->value, value);
@@ -95,7 +100,7 @@ void hash_table_delete(hash_table_t *hash_table, char *key) {
 		}
 	}
 
-	destroy_bucket(current_bucket);
+	destroy_bucket(current_bucket, false);
 }
 
 char *hash_table_get(hash_table_t *hash_table, char *key) {
@@ -120,6 +125,15 @@ char *hash_table_get(hash_table_t *hash_table, char *key) {
 	}
 
 	return NULL;
+}
+
+void hash_table_destroy(hash_table_t *hash_table) {
+	for (int i = 0; i < hash_table->map_size; ++i) {
+		destroy_bucket(hash_table->buckets[i], true);
+	}
+
+	free(hash_table->buckets);
+	free(hash_table);
 }
 
 void hash_table_dump(hash_table_t *hash_table) {

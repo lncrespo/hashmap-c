@@ -19,3 +19,4 @@ hash_table_t *hash_table_init(int map_size);
 bool hash_table_insert(hash_table_t *hash_table, char* key, char* value);
 void hash_table_delete(hash_table_t *hash_table, char* key);
 char *hash_table_get(hash_table_t *hash_table, char* key);
+void hash_table_destroy(hash_table_t *hash_table);
